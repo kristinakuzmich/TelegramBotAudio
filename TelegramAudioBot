@@ -1,0 +1,82 @@
+import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.TelegramBotsApi;
+import org.telegram.telegrambots.meta.api.methods.send.SendAudio;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
+import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class MainAudio {
+    public static void main(String[] args) throws TelegramApiException {
+        TelegramBotsApi telegrambotsapi=new TelegramBotsApi(DefaultBotSession.class);
+        telegrambotsapi.registerBot(new BotAudio());
+    }
+
+    public static class BotAudio extends TelegramLongPollingBot {
+        @Override
+        public String getBotUsername() {
+            return "overone_kuz_music_bot";
+        }
+
+        @Override
+        public String getBotToken() {
+            return "5607398502:AAEX4BUMVE-gBVWY5tlifLLiLSibIqZ4SjY";
+        }
+
+        //Девочка, танцуй CQACAgIAAxkBAAMHY17x3RSYfb4KzYT5OEdc3RUqUtgAAvMkAAI14_lK7sFg33WnvT8qBA
+        //Малиновая лада, CQACAgIAAxkBAAMJY17yTHoMk3OM5NXTDtuP0YpeHaIAAvckAAI14_lKYig4o81zxEkqBA
+        //Пошла жара CQACAgIAAxkBAAMLY17ygcr4yuAkYG-euNHkv14n79IAAvskAAI14_lKlmuG6sCx4nwqBA
+        //Солнце монако CQACAgIAAxkBAAMNY17yrZOuvsCmE7WqGFchEd9zL-sAAvwkAAI14_lKnTVUHOjoUAEqBA
+
+        @Override
+        public void onUpdateReceived(Update update) {
+            SendMessage sendMessage=new SendMessage();
+            sendMessage.setChatId(update.getMessage().getChatId().toString());
+            KeyboardRow keyBoardRow1 = new KeyboardRow();
+            keyBoardRow1.add(new KeyboardButton("Девочка, танцуй"));
+            keyBoardRow1.add(new KeyboardButton("Малиновая лада"));
+
+            KeyboardRow keyBoardRow2 = new KeyboardRow();
+            keyBoardRow2.add(new KeyboardButton("Пошла жара"));
+            keyBoardRow2.add(new KeyboardButton("Солнце Монако"));
+
+            List<KeyboardRow> list = new ArrayList<>();
+            list.add(keyBoardRow1);
+            list.add(keyBoardRow2);
+
+            ReplyKeyboardMarkup replyKeyboardMarkup=new ReplyKeyboardMarkup();
+            replyKeyboardMarkup.setKeyboard(list);
+            sendMessage.setText(update.getMessage().getText());
+            sendMessage.setReplyMarkup(replyKeyboardMarkup);
+
+            SendAudio sendAudio=new SendAudio();
+            sendAudio.setChatId(update.getMessage().getChatId().toString());
+
+            InputFile inputFile=new InputFile();
+
+            switch ((update.getMessage().getText())){
+                case "Девочка, танцуй": inputFile.setMedia("CQACAgIAAxkBAAMHY17x3RSYfb4KzYT5OEdc3RUqUtgAAvMkAAI14_lK7sFg33WnvT8qBA");
+                break;
+                case "Малиновая лада": inputFile.setMedia("CQACAgIAAxkBAAMJY17yTHoMk3OM5NXTDtuP0YpeHaIAAvckAAI14_lKYig4o81zxEkqBA");
+                break;
+                case "Пошла жара":inputFile.setMedia("CQACAgIAAxkBAAMLY17ygcr4yuAkYG-euNHkv14n79IAAvskAAI14_lKlmuG6sCx4nwqBA");
+                break;
+                case "Солнце Монако":inputFile.setMedia("CQACAgIAAxkBAAMNY17yrZOuvsCmE7WqGFchEd9zL-sAAvwkAAI14_lKnTVUHOjoUAEqBA");
+            }
+            sendAudio.setAudio(inputFile);
+
+            try {
+                execute(sendAudio);
+            } catch (TelegramApiException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+}
